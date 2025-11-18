@@ -101,7 +101,7 @@ export default function Game() {
 
   const logout = async () => {
     await fetch("/api/logout");
-    router.push("/login");
+    router.push("/");
   };
 
   return (
