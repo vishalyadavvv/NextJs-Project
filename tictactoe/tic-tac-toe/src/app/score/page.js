@@ -1,10 +1,20 @@
 "use client";
+
 import { useScore } from "../context/ScoreContext";
 import { useRouter } from "next/navigation";
+import { useState, useEffect } from "react";
 
 export default function ScorePage() {
   const { score } = useScore();
   const router = useRouter();
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  // Prevent render during SSR or if score is undefined
+  if (!mounted || !score) return null;
 
   const totalGames = score.x + score.o + score.draws;
   const xWinPercentage = totalGames > 0 ? Math.round((score.x / totalGames) * 100) : 0;
@@ -25,7 +35,7 @@ export default function ScorePage() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-purple-900 to-gray-900 text-white p-4 sm:p-6">
+    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-purple-900 to-gray-900 text-white p-4 sm:p-6 relative">
       {/* Animated Background */}
       <div className="absolute inset-0 overflow-hidden">
         <div className="absolute -top-40 -right-40 w-80 h-80 bg-cyan-500/20 rounded-full blur-3xl"></div>
@@ -35,7 +45,7 @@ export default function ScorePage() {
 
       <div className="relative max-w-4xl mx-auto">
         {/* Header */}
-        <div className="text-center mb-8 sm:mb-12">
+        <div className="text-center mb-8 sm:mb-12 relative">
           <button
             onClick={() => router.back()}
             className="absolute left-0 top-0 bg-gray-800/50 hover:bg-gray-700/50 backdrop-blur-sm border border-gray-700/50 rounded-xl px-4 py-2 transition-all duration-300 transform hover:scale-105 flex items-center space-x-2 group"
@@ -54,6 +64,7 @@ export default function ScorePage() {
           </p>
         </div>
 
+        {/* Player Rank and Score Cards */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 sm:gap-8">
           {/* Player Rank Card */}
           <div className="bg-gray-800/50 backdrop-blur-xl border border-gray-700/50 rounded-3xl p-6 sm:p-8 text-center shadow-2xl">
@@ -71,7 +82,7 @@ export default function ScorePage() {
 
           {/* Score Cards */}
           <div className="lg:col-span-2 grid grid-cols-1 sm:grid-cols-3 gap-4 sm:gap-6">
-            {/* X Wins Card */}
+            {/* X Wins */}
             <div className="bg-gradient-to-br from-blue-500/20 to-purple-600/20 backdrop-blur-xl border border-blue-500/30 rounded-2xl p-6 text-center shadow-2xl transform hover:scale-105 transition-all duration-300">
               <div className="text-4xl sm:text-5xl font-bold text-blue-400 mb-2">{score.x}</div>
               <div className="text-lg font-semibold text-blue-300 mb-2">X Wins</div>
@@ -79,12 +90,12 @@ export default function ScorePage() {
                 <div 
                   className="bg-gradient-to-r from-blue-400 to-purple-500 h-2 rounded-full transition-all duration-1000 ease-out"
                   style={{ width: `${xWinPercentage}%` }}
-                ></div>
+                />
               </div>
               <div className="text-sm text-blue-200">{xWinPercentage}%</div>
             </div>
 
-            {/* Draws Card */}
+            {/* Draws */}
             <div className="bg-gradient-to-br from-gray-500/20 to-gray-600/20 backdrop-blur-xl border border-gray-500/30 rounded-2xl p-6 text-center shadow-2xl transform hover:scale-105 transition-all duration-300">
               <div className="text-4xl sm:text-5xl font-bold text-gray-300 mb-2">{score.draws}</div>
               <div className="text-lg font-semibold text-gray-300 mb-2">Draws</div>
@@ -92,12 +103,12 @@ export default function ScorePage() {
                 <div 
                   className="bg-gradient-to-r from-gray-400 to-gray-500 h-2 rounded-full transition-all duration-1000 ease-out"
                   style={{ width: `${drawPercentage}%` }}
-                ></div>
+                />
               </div>
               <div className="text-sm text-gray-300">{drawPercentage}%</div>
             </div>
 
-            {/* O Wins Card */}
+            {/* O Wins */}
             <div className="bg-gradient-to-br from-amber-500/20 to-orange-600/20 backdrop-blur-xl border border-amber-500/30 rounded-2xl p-6 text-center shadow-2xl transform hover:scale-105 transition-all duration-300">
               <div className="text-4xl sm:text-5xl font-bold text-amber-400 mb-2">{score.o}</div>
               <div className="text-lg font-semibold text-amber-300 mb-2">O Wins</div>
@@ -105,56 +116,9 @@ export default function ScorePage() {
                 <div 
                   className="bg-gradient-to-r from-amber-400 to-orange-500 h-2 rounded-full transition-all duration-1000 ease-out"
                   style={{ width: `${oWinPercentage}%` }}
-                ></div>
+                />
               </div>
               <div className="text-sm text-amber-200">{oWinPercentage}%</div>
-            </div>
-          </div>
-        </div>
-
-        {/* Statistics Section */}
-        <div className="mt-8 sm:mt-12 grid grid-cols-1 md:grid-cols-2 gap-6 sm:gap-8">
-          {/* Win Distribution */}
-          <div className="bg-gray-800/50 backdrop-blur-xl border border-gray-700/50 rounded-3xl p-6 sm:p-8 shadow-2xl">
-            <h3 className="text-xl sm:text-2xl font-bold text-center mb-6 bg-gradient-to-r from-cyan-400 to-purple-400 bg-clip-text text-transparent">
-              Win Distribution
-            </h3>
-            <div className="space-y-4">
-              <div className="flex items-center justify-between">
-                <span className="text-gray-300">X Victory Rate</span>
-                <span className="text-blue-400 font-semibold">{xWinPercentage}%</span>
-              </div>
-              <div className="flex items-center justify-between">
-                <span className="text-gray-300">O Victory Rate</span>
-                <span className="text-amber-400 font-semibold">{oWinPercentage}%</span>
-              </div>
-              <div className="flex items-center justify-between">
-                <span className="text-gray-300">Draw Rate</span>
-                <span className="text-gray-400 font-semibold">{drawPercentage}%</span>
-              </div>
-            </div>
-          </div>
-
-          {/* Performance Metrics */}
-          <div className="bg-gray-800/50 backdrop-blur-xl border border-gray-700/50 rounded-3xl p-6 sm:p-8 shadow-2xl">
-            <h3 className="text-xl sm:text-2xl font-bold text-center mb-6 bg-gradient-to-r from-cyan-400 to-purple-400 bg-clip-text text-transparent">
-              Performance Metrics
-            </h3>
-            <div className="space-y-4">
-              <div className="flex items-center justify-between">
-                <span className="text-gray-300">Total Matches</span>
-                <span className="text-white font-semibold">{totalGames}</span>
-              </div>
-              <div className="flex items-center justify-between">
-                <span className="text-gray-300">Decided Games</span>
-                <span className="text-green-400 font-semibold">{score.x + score.o}</span>
-              </div>
-              <div className="flex items-center justify-between">
-                <span className="text-gray-300">Win Ratio</span>
-                <span className="text-purple-400 font-semibold">
-                  {totalGames > 0 ? Math.round(((score.x + score.o) / totalGames) * 100) : 0}%
-                </span>
-              </div>
             </div>
           </div>
         </div>
@@ -165,21 +129,13 @@ export default function ScorePage() {
             onClick={() => router.push("/game")}
             className="bg-gradient-to-r from-cyan-500 to-purple-600 hover:from-cyan-600 hover:to-purple-700 text-white font-semibold py-3 px-8 rounded-xl transition-all duration-300 transform hover:scale-105 shadow-lg flex items-center justify-center space-x-2"
           >
-            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z" />
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-            </svg>
-            <span>Play Again</span>
+            Play Again
           </button>
-
           <button
             onClick={() => router.push("/")}
-            className="bg-gray-700/50 hover:bg-gray-600/50 border border-gray-600/50 hover:border-gray-500/50 text-white font-semibold py-3 px-8 rounded-xl transition-all duration-300 transform hover:scale-105 shadow-lg flex items-center justify-center space-x-2"
+            className="bg-gray-700/50 hover:bg-gray-600/50 border border-gray-600/50 text-white font-semibold py-3 px-8 rounded-xl transition-all duration-300 transform hover:scale-105 shadow-lg flex items-center justify-center space-x-2"
           >
-            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
-            </svg>
-            <span>Home</span>
+            Home
           </button>
         </div>
       </div>
