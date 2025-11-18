@@ -68,8 +68,19 @@ export default function Home() {
             </span>
           </div>
           
-          <div className="flex space-x-4">
-           
+          <div className="flex space-x-3 sm:space-x-4">
+            <button
+              onClick={() => router.push("/login")}
+              className="bg-gray-800/50 backdrop-blur-sm border border-gray-700/50 hover:border-cyan-500/50 text-white font-semibold px-4 sm:px-6 py-2 sm:py-2.5 rounded-xl transition-all duration-300 transform hover:scale-105 text-sm sm:text-base"
+            >
+              Login
+            </button>
+            <button
+              onClick={() => router.push("/register")}
+              className="bg-gradient-to-r from-cyan-500 to-purple-600 hover:from-cyan-600 hover:to-purple-700 text-white font-semibold px-4 sm:px-6 py-2 sm:py-2.5 rounded-xl transition-all duration-300 transform hover:scale-105 shadow-lg text-sm sm:text-base"
+            >
+              Register
+            </button>
           </div>
         </header>
 
